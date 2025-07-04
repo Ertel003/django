@@ -1,31 +1,19 @@
 from django.shortcuts import render, redirect
-from .models import Familiar, Curso, Estudiante
-from .forms import CursoForm, EstudianteForm
+from .models import Curso, Estudiante, Entregable
+from .forms import CursoForm, EstudianteForm, EntregableForm
 
 # Create your views here.
 
-from django.http import HttpResponse
+#from django.http import HttpResponse
 
 def inicio(request):
     return render(request, 'mi_primer_App/inicio.html')
 
-def saludo(request):
-    return HttpResponse("¡Hola, mundo!")
+#def saludo(request):
+#    return HttpResponse("¡Hola, mundo!")
 
-def saludo_con_template(request):
-    return render(request, 'mi_primer_App/saludo.html')
-
-def crear_familiar(request, nombre):
-    if nombre is not None:
-        nuevo_familiar = Familiar(
-            nombre=nombre,
-            apellido="ApellidoEjemplo",
-            edad=30,
-            fecha_nacimiento="1993-01-01",
-            parentesco="Primo"
-        )
-        nuevo_familiar.save()
-    return render(request, 'mi_primer_App/crear_familiar.html', {'nombre': nombre})
+#def saludo_con_template(request):
+#    return render(request, 'mi_primer_App/saludo.html')
 
 def crear_curso(request):
     if request.method == 'POST':
@@ -47,7 +35,6 @@ def crear_curso(request):
 
 
 def crear_estudiante(request):
-
     if request.method == 'POST':
         form = EstudianteForm(request.POST)
         if form.is_valid():
@@ -76,3 +63,20 @@ def buscar_cursos(request):
         nombre = request.GET.get('nombre', '')
         cursos = Curso.objects.filter(nombre__icontains=nombre)
         return render(request, 'mi_primer_app/cursos.html', {'cursos': cursos, 'nombre': nombre})
+
+def crear_entregable(request):
+    if request.method == 'POST':
+        form = EntregableForm(request.POST)
+        if form.is_valid():
+            # Procesar el formulario y guardar el entregable
+            nuevo_entregable = Entregable(
+                nombre = form.cleaned_data['nombre'],
+                fecha_entrega = form.cleaned_data['fecha_entrega'],
+                entregado = form.cleaned_data['entregado'],
+                estudiante = form.cleaned_data['estudiante']
+            )
+            nuevo_entregable.save()
+            return redirect('inicio')
+    else:
+        form = EntregableForm()
+        return render(request, 'mi_primer_app/crear_entregable.html', {'form': form})
