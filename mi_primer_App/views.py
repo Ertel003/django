@@ -80,3 +80,5 @@ def crear_entregable(request):
     else:
         form = EntregableForm()
         return render(request, 'mi_primer_app/crear_entregable.html', {'form': form})
+    
+#hdi
